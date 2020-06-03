@@ -24,19 +24,14 @@ app.use(expressValidator());
 app.use(cors());
 
 // * Routes
-const userRoutes = require('./routes/user');
-
-// const studentAuthRoutes = require('./routes/studentAuth');
-// const tutorAuthRoutes = require('./routes/tutorAuth');
-
-// const messageRoutes = require('./routes/message');
+const authRoutes = require('./routes/auth');
+const studentRoutes = require('./routes/student');
+const chatRoutes = require('./routes/chat');
 
 // * Route middleware
-app.use('/api', userRoutes);
-
-// app.use('/api/student', studentAuthRoutes);
-// app.use('/api/tutor', tutorAuthRoutes);
-// app.use('/api/message', messageRoutes);
+app.use('/api', authRoutes);
+app.use('/api', studentRoutes);
+app.use('/api', chatRoutes);
 
 io.on('connection', socket => {
 

@@ -5,12 +5,13 @@ const User = require('../models/user');
 
 exports.signup = async (req, res) => {
     try {
-        let { email, name, password } = req.body;
+        let { email, name, password, role } = req.body;
         let hashedPassword = await bcrypt.hash(password, 10)
         let user = new User({
             email,
             name,
-            password: hashedPassword
+            password: hashedPassword,
+            role
         });
         user = await user.save();
         res.json(user);
@@ -26,7 +27,7 @@ exports.signin = async (req, res) => {
         if (!user) return res.status(400).json({ error: 'user not found' });
 
         if (!(await bcrypt.compare(password, user.password))) {
-            return res.send('email and password do not match');
+            return res.json({ error: "email and password dont match" });
         }
 
         const token = jwt.sign({ _id: user._id }, 'mySecretKey');
@@ -36,13 +37,13 @@ exports.signin = async (req, res) => {
             user: { _id: user._id, name: user.name, email: user.email, role: user.role }
         })
     } catch (error) {
-        return res.send(`error of: ${error}`)
+        return res.json({ error })
     }
 }
 
 exports.signout = (req, res) => {
     res.clearCookie('testCookie');
-    return res.send('successfully signed out');
+    return res.json({ message: 'successfully signed out' });
 }
 
 // makes it so you need token 
