@@ -26,11 +26,13 @@ app.use(cors());
 // * Routes
 const authRoutes = require('./routes/auth');
 const studentRoutes = require('./routes/student');
+const bookingRoutes = require('./routes/booking');
 const chatRoutes = require('./routes/chat');
 
 // * Route middleware
 app.use('/api', authRoutes);
 app.use('/api', studentRoutes);
+app.use('/api', bookingRoutes);
 app.use('/api', chatRoutes);
 
 io.on('connection', socket => {

@@ -78,7 +78,7 @@ exports.getChat = async (req, res) => {
     let { senderId, studentId, tutorId } = req.params;
 
     try {
-        let user = await User.findById(senderId);
+        let user = await User.findOne({ _id: senderId });
         if (!user) return res.status(400).json({ error: 'no user found' });
 
         let chat = user.inbox.filter(chat => chat.partnerId === studentId || chat.partnerId === tutorId)[0]
