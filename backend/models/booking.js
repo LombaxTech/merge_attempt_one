@@ -12,6 +12,9 @@ const bookingSchema = new Schema({
     },
     subject: String,
     time: Date
+    // TODO: add notes and # of students fields
 })
 
-module.exports = bookingSchema;
+const bookingModel = mongoose.model('Booking', bookingSchema);
+
+module.exports = bookingModel;

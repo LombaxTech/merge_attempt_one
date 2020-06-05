@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const bookingSchema = require('./booking');
 const inboxSchema = require('./inbox');
 
 const userSchema = new Schema({
@@ -19,8 +18,8 @@ const userSchema = new Schema({
         required: true,
     },
     subjects: [String],
-    bookings: [bookingSchema],
-    cancelledBookings: [bookingSchema],
+    // bookings: [bookingSchema],
+    // cancelledBookings: [bookingSchema],
     university: {
         type: String
     },
