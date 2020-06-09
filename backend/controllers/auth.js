@@ -3,21 +3,60 @@ const expressJwt = require('express-jwt');
 const bcrypt = require('bcrypt')
 const User = require('../models/user');
 
+const formidable = require('formidable');
+const cloudinary = require('cloudinary').v2;
+
+
 exports.signup = async (req, res) => {
-    try {
-        let { email, name, password, role } = req.body;
-        let hashedPassword = await bcrypt.hash(password, 10)
-        let user = new User({
-            email,
-            name,
-            password: hashedPassword,
-            role
-        });
-        user = await user.save();
-        res.json(user);
-    } catch (error) {
-        res.send(`error of: ${error}`);
-    }
+
+    const form = formidable({ multiples: true });
+
+    form.parse(req, async (error, fields, files) => {
+
+        if (error) return res.json({ error })
+        let { name, email, password, role } = fields;
+        let { avatar } = files;
+        password = await bcrypt.hash(password, 10);
+        role = parseInt(role);
+        // return res.json({ name, email, password, role, avatar });
+
+        cloudinary.uploader.upload(avatar.path, async (error, result) => {
+            if (error) return res.json({ error });
+            let user = new User({
+                name,
+                email,
+                password,
+                role,
+                avatar: {
+                    image: result.url,
+                    image_id: result.public_id
+                }
+            });
+            try {
+                user = await user.save();
+                return res.json({ success: true, user })
+            } catch (error) {
+                return res.status(400).json({ error })
+            }
+        })
+
+    });
+
+
+    // try {
+    //     let { email, name, password, role } = req.body;
+    //     let hashedPassword = await bcrypt.hash(password, 10)
+    //     let user = new User({
+    //         email,
+    //         name,
+    //         password: hashedPassword,
+    //         role
+    //     });
+    //     user = await user.save();
+    //     res.json(user);
+    // } catch (error) {
+    //     res.send(`error of: ${error}`);
+    // }
 }
 
 exports.signin = async (req, res) => {
@@ -32,9 +71,16 @@ exports.signin = async (req, res) => {
 
         const token = jwt.sign({ _id: user._id }, 'mySecretKey');
         res.cookie('testCookie', token, { expire: new Date() + 9999 });
+
         return res.json({
             token,
-            user: { _id: user._id, name: user.name, email: user.email, role: user.role }
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                avatar_image: user.avatar.image
+            }
         })
     } catch (error) {
         return res.json({ error })

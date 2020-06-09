@@ -6,6 +6,13 @@ const expressValidator = require('express-validator');
 const cors = require('cors');
 const app = express();
 
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: 'dhrowvziz',
+    api_key: '574268577399774',
+    api_secret: 'kVM_RV4IPwIhz0yxgr5A4UvUS40'
+});
+
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 
@@ -20,7 +27,6 @@ mongoose.connect('mongodb://user:password123@ds125574.mlab.com:25574/merge_attem
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
-app.use(expressValidator());
 app.use(cors());
 
 // * Routes
