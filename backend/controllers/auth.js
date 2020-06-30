@@ -8,17 +8,17 @@ const cloudinary = require('cloudinary').v2;
 
 
 exports.signup = async (req, res) => {
-
+    
     const form = formidable({ multiples: true });
 
     form.parse(req, async (error, fields, files) => {
 
-        if (error) return res.json({ error })
+        if (error) return res.json({ message: "An error occured", error });
         let { name, email, password, role } = fields;
         let { avatar } = files;
         password = await bcrypt.hash(password, 10);
         role = parseInt(role);
-        // return res.json({ name, email, password, role, avatar });
+        return res.json({ name, email, password, role, avatar });
 
         cloudinary.uploader.upload(avatar.path, async (error, result) => {
             if (error) return res.json({ error });
